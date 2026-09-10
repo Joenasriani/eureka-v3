@@ -5,13 +5,17 @@ import { selectGenerators, retrieveSources, generateLocalCandidates } from './ge
 import { verifyCandidates, adjudicate } from './verifier.mjs';
 import { atomizeCandidates } from './atomizer.mjs';
 import { aiAssistCandidates, aiAdversarialReview, aiAvailable, aiDiscoverSources, aiEnrichCase, aiResearchEvidence } from './ai.mjs';
-import { getProfile, setProfile, saveCase, updateCase, listCases } from './storage.mjs';
+import { getProfile, setProfile, saveCase, updateCase, listCases, getPersonContext } from './storage.mjs';
+import { personSearchMaterial } from './person.mjs';
+import { personHistoryRecords, markKnownSources } from './person-bridge.mjs';
 
 export async function runPipeline(input, options={}) {
   const trace = [];
   const startedAt = new Date().toISOString();
   const caseId = options.caseId || crypto.randomUUID();
   const profile = await getProfile();
+  const personContext = await getPersonContext();
+  const personMaterial = personSearchMaterial(personContext);
 
   trace.push(stage('INTAKE','User experience admitted', true));
   let parsed = parseCase(input);
@@ -27,14 +31,17 @@ export async function runPipeline(input, options={}) {
   parsed = caseAudit.parsed;
   trace.push(stage('INTERPRET',caseAudit.note,true));
 
-  const calibration = deriveCalibration(parsed.raw, profile);
+  const calibration = deriveCalibration(parsed.raw, profile, personContext);
   trace.push(stage('LEVEL',`AHA frontier: ${calibration.label}; abstraction ${Math.round(calibration.abstractionPreference*100)}`, true));
 
   const generators = selectGenerators(parsed);
   trace.push(stage('ROUTE',`AHA target ${parsed.ahaTarget}; generators ${generators.map(g=>g.id).join(', ')}`, true));
 
-  const history = parsed.raw.reuseHistory ? await listCases() : [];
-  const retrieval = retrieveSources(parsed, calibration, profile, options.excludedSourceIds || [], history);
+  const storedHistory = parsed.raw.reuseHistory ? await listCases() : [];
+  const importedHistory = personContext.permissions?.useStoriesForP1 ? personHistoryRecords(personMaterial) : [];
+  const history = [...storedHistory, ...importedHistory];
+  let retrieval = retrieveSources(parsed, calibration, profile, options.excludedSourceIds || [], history);
+  retrieval = markKnownSources(retrieval, personMaterial.knownConcepts);
   const openSources = await aiDiscoverSources(parsed, calibration);
   const mergedSelected = mergeSourceSearch(retrieval.selected, openSources.sources, options.excludedSourceIds || []);
   const effectiveRetrieval = {...retrieval, selected:mergedSelected};
@@ -65,7 +72,7 @@ export async function runPipeline(input, options={}) {
     engine:{mode:(ai.used || caseAudit.used || openSources.sources.length)?'AI_ASSISTED':'DETERMINISTIC', model:(ai.used || caseAudit.used || openSources.sources.length)?(process.env.OPENAI_MODEL || 'gpt-5.6-terra'):null},
     input:parsed.raw,
     experienceGraph:{anchors:parsed.anchors,episodes:parsed.episodes,relations:parsed.relations},
-    analysis:{ahaTarget:parsed.ahaTarget,relationalSignature:parsed.relationalSignature,oldFrame:parsed.oldFrame,unresolvedResidue:parsed.unresolvedResidue,stakes:parsed.stakes,generators,calibration,retrieval:[...retrieval.ranked,...openSources.sources].map(compactSource),contrast:retrieval.contrast,openSourceSearch:openSources.note,caseInterpretation:caseAudit.note,historySearch:parsed.raw.reuseHistory?`${history.length} stored cases admitted to P1 search`:'stored cases not admitted to this search'},
+    analysis:{ahaTarget:parsed.ahaTarget,relationalSignature:parsed.relationalSignature,oldFrame:parsed.oldFrame,unresolvedResidue:parsed.unresolvedResidue,stakes:parsed.stakes,generators,calibration,retrieval:[...retrieval.ranked,...openSources.sources].map(compactSource),contrast:retrieval.contrast,openSourceSearch:openSources.note,caseInterpretation:caseAudit.note,historySearch:`${storedHistory.length} stored cases and ${importedHistory.length} imported person episodes admitted to P1 search`,personContext:{used:calibration.personContextUsed,name:personContext.identity?.preferredName||personContext.identity?.name||'',domains:personMaterial.domains.length,knownConcepts:personMaterial.knownConcepts.length,stories:personMaterial.stories.length}},
     outcome:adjudication.outcome,
     reason:adjudication.reason,
     candidates:adjudication.candidates,
@@ -188,7 +195,6 @@ export async function reroute(caseId, payload) {
   }
   return runPipeline(prior.input, {caseId, excludedSourceIds:[...exclude], priorFeedback:prior.feedback || [], originalCreatedAt:prior.createdAt, revision:(prior.revision || 0)+1});
 }
-
 
 function mergeSourceSearch(localSources, aiSources, excludedSourceIds) {
   const excluded = new Set(excludedSourceIds || []);

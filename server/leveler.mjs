@@ -1,8 +1,12 @@
 const clamp = (n, lo=0, hi=1) => Math.max(lo, Math.min(hi, n));
 
-export function deriveCalibration(caseInput, profile) {
+export function deriveCalibration(caseInput, profile, personContext={}) {
   const text = [caseInput.story, caseInput.goal, caseInput.currentFrame, caseInput.tried, caseInput.success].join(' ').toLowerCase();
-  const explicitDomains = splitDomains(caseInput.familiarDomains);
+  const personDomains = (personContext?.permissions?.useForPersonalization === false) ? [] : [
+    ...(personContext.familiarWorlds || []), ...(personContext.knowledgeDomains || []), ...(personContext.skills || [])
+  ].map(x=>typeof x==='string'?x:x?.text).filter(Boolean);
+  const explicitDomains = [...new Set([...splitDomains(caseInput.familiarDomains),...personDomains.flatMap(splitDomains)])];
+  const knownConcepts = (personContext?.permissions?.useForPersonalization === false) ? [] : (personContext.knownConcepts || []).map(x=>typeof x==='string'?x:x?.text).filter(Boolean);
   const conceptualMarkers = ['feedback','system','constraint','tradeoff','trade-off','bottleneck','signal','incentive','probability','uncertainty','network','optimization','iteration','hypothesis','causal','correlation','explore','exploit'];
   const markerCount = conceptualMarkers.filter(x => text.includes(x)).length;
 
@@ -18,12 +22,14 @@ export function deriveCalibration(caseInput, profile) {
     bridgeTolerance,
     noveltyFloor,
     explicitDomains,
+    knownConcepts,
+    personContextUsed:personContext?.permissions?.useForPersonalization !== false && Boolean(personContext?.updatedAt),
     caseAbstraction,
     label: distanceLabel(targetDistance)
   };
 }
 
-export function rankByFrontier(matrix, structuralScore, calibration, familiar=false, sourceStats={}) {
+export function rankByFrontier(matrix, structuralScore, calibration, familiar=false, sourceStats={}, known=false) {
   const distanceGap = Math.abs(matrix.distance - calibration.targetDistance);
   const distanceFit = 1 - distanceGap;
   const abstractionGap = Math.abs(matrix.abstraction - calibration.abstractionPreference);
@@ -32,7 +38,7 @@ export function rankByFrontier(matrix, structuralScore, calibration, familiar=fa
   const bridgeFit = 1 - Math.max(0, bridgeCost - calibration.bridgeTolerance);
   const stats = sourceStats[matrix.id] || {};
   const recognitionPrior = clamp((stats.clicks || 0) * 0.03 + (stats.strong || 0) * 0.05 - (stats.known || 0) * 0.05 - (stats.miss || 0) * 0.06, -0.2, 0.2);
-  const noveltyPenalty = matrix.distance < calibration.noveltyFloor && !familiar ? 0.12 : 0;
+  const noveltyPenalty = (matrix.distance < calibration.noveltyFloor && !familiar ? 0.12 : 0) + (known ? 0.16 : 0);
 
   return {
     score: structuralScore * 0.52 + distanceFit * 0.18 + abstractionFit * 0.1 + bridgeFit * 0.1 + recognitionPrior - noveltyPenalty,

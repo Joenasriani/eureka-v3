@@ -1,12 +1,17 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { emptyPersonContext } from './person.mjs';
 
 const STATE_FILE = path.resolve(process.env.EUREKA_STATE_FILE || 'data/state.json');
 let writeChain = Promise.resolve();
 
 export async function readState() {
   const raw = await fs.readFile(STATE_FILE, 'utf8');
-  return JSON.parse(raw);
+  const state = JSON.parse(raw);
+  if (!state.profile) state.profile = {targetDistance:.55,abstractionPreference:.5,bridgeTolerance:.55,noveltyFloor:.45,sourceStats:{},knownConcepts:[],rejectedConcepts:[]};
+  if (!Array.isArray(state.cases)) state.cases = [];
+  if (!state.personContext) state.personContext = emptyPersonContext();
+  return state;
 }
 
 export async function writeState(next) {
@@ -68,4 +73,22 @@ export async function setProfile(profile) {
   state.profile = profile;
   await writeState(state);
   return profile;
+}
+
+export async function getPersonContext() {
+  return (await readState()).personContext;
+}
+
+export async function setPersonContext(personContext) {
+  const state = await readState();
+  state.personContext = personContext;
+  await writeState(state);
+  return personContext;
+}
+
+export async function clearPersonContext() {
+  const state = await readState();
+  state.personContext = emptyPersonContext();
+  await writeState(state);
+  return state.personContext;
 }

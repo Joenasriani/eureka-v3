@@ -10,6 +10,8 @@ The user alone records whether a candidate clicked. That report can change later
 
 The current build also supports:
 
+0. A separate Person Context record with direct notes, ChatGPT JSON import, provenance, permissions, known concepts, familiar fields, prior stories, and independent erasure. Person Context can alter retrieval and Leveler calibration but cannot promote evidence or structural status.
+
 1. Same case P1 retrieval from a contrasting successful episode.
 2. Prior case P1 retrieval when the user explicitly permits stored case access.
 3. P2 familiar field retrieval only from explicitly supplied familiarity.
@@ -26,6 +28,9 @@ The current build also supports:
 14. Real world transfer outcome recording.
 15. Case deletion and full ledger clearing.
 16. Null outcomes for thin input and consequential case gating.
+17. A built in ChatGPT Person Context prompt at `public/person-prompt.txt`, with a copy control in the PERSON view.
+18. Optional P1 retrieval from imported prior episodes when the user permits it.
+19. Known concept suppression so imported knowledge can reduce obvious source suggestions without acting as an intelligence score.
 
 ## Run
 

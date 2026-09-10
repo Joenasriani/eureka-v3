@@ -1,6 +1,6 @@
 {
   "name": "eureka-codex",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,6 @@
     "dev": "node --watch server.mjs",
     "test:unit": "node tests/run.mjs",
     "test:integration": "node tests/integration.mjs",
-    "test": "npm run test:unit && npm run test:integration"
+    "test": "node tests/run.mjs && node tests/integration.mjs && node tests/person-context.mjs"
   }
 }

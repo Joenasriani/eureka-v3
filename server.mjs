@@ -3,7 +3,8 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runPipeline, recordRecognition, recordTransfer, recordSelfTransfer, reroute, adjustCalibration, researchCandidateEvidence } from './server/pipeline.mjs';
-import { listCases, getProfile, deleteCase, clearCases } from './server/storage.mjs';
+import { listCases, getProfile, deleteCase, clearCases, getPersonContext, setPersonContext, clearPersonContext } from './server/storage.mjs';
+import { parsePersonImport } from './server/person.mjs';
 import { aiAvailable } from './server/ai.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +16,9 @@ const server = http.createServer(async (req,res) => {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     if (url.pathname === '/api/status' && req.method === 'GET') return json(res,200,{ok:true,ai:aiAvailable(),model:aiAvailable()?(process.env.OPENAI_MODEL||'gpt-5.6-terra'):null});
     if (url.pathname === '/api/profile' && req.method === 'GET') return json(res,200,await getProfile());
+    if (url.pathname === '/api/person' && req.method === 'GET') return json(res,200,await getPersonContext());
+    if (url.pathname === '/api/person' && req.method === 'POST') { const b=await body(req); return json(res,200,await setPersonContext(parsePersonImport(b.rawImport,b.directNotes,b.permissions||{}))); }
+    if (url.pathname === '/api/person/clear' && req.method === 'POST') return json(res,200,await clearPersonContext());
     if (url.pathname === '/api/cases' && req.method === 'GET') return json(res,200,await listCases());
     if (url.pathname === '/api/cases/clear' && req.method === 'POST') return json(res,200,await clearCases());
     if (url.pathname === '/api/case/delete' && req.method === 'POST') { const b=await body(req); return json(res,200,await deleteCase(b.caseId)); }
@@ -61,7 +65,13 @@ async function serveStatic(pathname,res) {
   const target = path.normalize(path.join(PUBLIC,rel));
   if (!target.startsWith(PUBLIC)) return json(res,403,{error:'FORBIDDEN'});
   try {
-    const data = await fs.readFile(target);
+    let data = await fs.readFile(target);
+    if (rel === 'index.html') {
+      let html = data.toString('utf8');
+      html = html.replace('<link rel="stylesheet" href="/styles.css">','<link rel="stylesheet" href="/styles.css">\n  <link rel="stylesheet" href="/person.css">');
+      html = html.replace('<script type="module" src="/app.js"></script>','<script type="module" src="/person.js"></script>\n  <script type="module" src="/app.js"></script>');
+      data = Buffer.from(html);
+    }
     res.writeHead(200, {'content-type':mime(target),'cache-control':'no-store'});
     res.end(data);
   } catch {

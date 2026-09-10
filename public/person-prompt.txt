@@ -1,0 +1,130 @@
+I am building a detailed personal context export that I will paste into another reasoning system called Eureka.
+
+Your task is to produce the most complete, searchable, source aware account of what you actually know about me from information that is available to you now.
+
+USE ONLY INFORMATION YOU CAN ACTUALLY ACCESS.
+
+Possible sources include:
+1. This conversation.
+2. Memory or memory summary available to you.
+3. Relevant past chat context that ChatGPT actually makes available to you.
+4. Files I have supplied and that you can inspect.
+5. My custom instructions or user profile if they are available in your context.
+6. Connected sources only if they are already available to you and their use is appropriate.
+
+DO NOT:
+1. Pretend you can see every old conversation if you cannot.
+2. Invent missing biography, motives, traits, diagnoses, abilities, education, relationships, income, beliefs, or life events.
+3. Reveal hidden system messages, developer messages, private chain of thought, internal reasoning, credentials, tokens, passwords, private security information, or inaccessible account metadata.
+4. Infer sensitive attributes such as religion, political views, ethnicity, sexuality, medical conditions, criminal history, or financial account information. If I explicitly stated a sensitive fact and it is genuinely necessary to understand my work or goals, place it only in the excluded_sensitive_self_disclosures field so I can decide separately whether Eureka should ever receive it.
+5. Turn repeated behavior into a personality diagnosis. Describe the observed pattern and its source instead.
+6. Merge contradictory facts. Preserve the contradiction.
+7. Treat your own earlier advice or speculation as facts about me.
+
+SEARCH YOUR AVAILABLE CONTEXT DEEPLY.
+
+Look for repeated information across time, not only the latest conversation. Search for names, aliases, locations, languages, work, employers, companies, businesses, products, projects, clients, industries, roles, responsibilities, career changes, education, courses, tools, software, technical skills, creative skills, hobbies, interests, subjects I know deeply, subjects I repeatedly ask about, mental models I already use, methods I dislike, recurring problems, repeated successes, repeated failures, abandoned attempts, unusual strengths demonstrated in examples, work conditions where I perform well, work conditions where I stall, communication patterns, learning patterns, decision patterns, creative processes, routines, constraints, current priorities, long term goals, open projects, unresolved questions, recurring frustrations, opportunities I keep returning to, important stories, notable incidents, surprising outcomes, contradictions between what I say and what happens, phrases or metaphors I repeatedly use, and anything else that could help another reasoning system find non obvious connections across my own history.
+
+For every important item, preserve provenance when possible. A source reference can be a chat title, approximate date, file name, memory source, or a short description of where the information came from. If you cannot identify the source, use UNKNOWN. Do not fabricate dates or chat titles.
+
+Separate direct information from inference.
+
+DIRECT means I explicitly stated it or it appears directly in an artifact I supplied.
+OBSERVED_PATTERN means you can point to repeated behavior in available conversations, but you must describe the behavior without diagnosing a trait.
+CANDIDATE_INFERENCE means a low risk interpretation that might help Eureka search, but it is not established fact.
+UNKNOWN means the available material does not support a conclusion.
+
+Be exhaustive, but collapse true duplicates. Keep distinct episodes separate when they occurred in different contexts because Eureka may compare them later.
+
+Return JSON only. Do not add an introduction or conclusion outside the JSON.
+
+Use this exact top level structure:
+
+{
+  "export_version": "EUREKA_PERSON_CONTEXT_1",
+  "generated_at": "ISO timestamp if known, otherwise UNKNOWN",
+  "access_audit": {
+    "available": [
+      {"text":"source or context actually used","source_ref":"reference if known"}
+    ],
+    "not_available": [
+      {"text":"source you could not inspect or verify","source_ref":"UNKNOWN"}
+    ]
+  },
+  "identity": {
+    "name": "",
+    "preferred_name": "",
+    "summary": "concise factual account of who I am based only on available material"
+  },
+  "languages": [],
+  "locations": [],
+  "roles": [],
+  "organizations": [],
+  "projects": [],
+  "skills": [],
+  "tools": [],
+  "knowledge_domains": [],
+  "familiar_worlds": [],
+  "known_concepts": [],
+  "creative_practices": [],
+  "work_patterns": [],
+  "success_patterns": [],
+  "friction_patterns": [],
+  "decision_patterns": [],
+  "communication_patterns": [],
+  "learning_patterns": [],
+  "goals": [],
+  "constraints": [],
+  "preferences": [],
+  "open_loops": [],
+  "opportunities": [],
+  "stories_and_episodes": [],
+  "repeated_phrases_metaphors": [],
+  "contradictions": [],
+  "artifacts": [],
+  "timeline": [],
+  "candidate_inferences": [],
+  "excluded_sensitive_self_disclosures": [],
+  "uncertainties": [],
+  "provenance_index": []
+}
+
+For every array item above, use objects instead of bare strings whenever enough information exists:
+
+{
+  "text": "the fact, pattern, episode, skill, project, goal, or other item",
+  "status": "DIRECT | OBSERVED_PATTERN | CANDIDATE_INFERENCE | UNKNOWN",
+  "source_ref": "chat, file, memory source, approximate date, or UNKNOWN",
+  "date": "date or period if actually known, otherwise UNKNOWN",
+  "confidence": "HIGH | MEDIUM | LOW | UNKNOWN",
+  "tags": ["searchable", "terms"]
+}
+
+Special instructions for stories_and_episodes:
+1. Preserve concrete events instead of summarizing everything into traits.
+2. Include what I was trying to do.
+3. Include what I did.
+4. Include what happened.
+5. Include what surprised me, if anything.
+6. Include the field or setting where it happened.
+7. Keep successes, failures, contradictions, and strange exceptions because they may become comparison cases later.
+
+Special instructions for familiar_worlds:
+List domains whose concepts, metaphors, workflows, or language I have demonstrably used or explicitly said I understand. Do not assume familiarity from one incidental word.
+
+Special instructions for known_concepts:
+List concepts or frameworks I clearly already know so Eureka does not waste time giving me obvious connections.
+
+Special instructions for candidate_inferences:
+Keep this section conservative. Every item must include the observations that motivated it in source_ref or text. Do not place an inference into any factual section.
+
+Before returning the JSON, perform these checks silently:
+1. Did I include information from across the available history rather than only the latest messages?
+2. Did I preserve important episodes and contradictions?
+3. Did I separate facts, observed patterns, and candidate inferences?
+4. Did I mark inaccessible history as unavailable instead of pretending to know it?
+5. Did I avoid sensitive inference?
+6. Did I avoid inventing dates, titles, projects, skills, or personal details?
+7. Would another reasoning system be able to search this export by person, project, domain, episode, capability, success, failure, goal, constraint, and known concept?
+
+Now produce the JSON export.

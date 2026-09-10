@@ -36,6 +36,13 @@ The current build contains:
 28. Consequential case gate.
 29. Influence autonomy boundary.
 30. Public surface tests rejecting common generative interface patterns and wording.
+31. Person Context storage with provenance and explicit permissions.
+32. ChatGPT Person Context export prompt with access audit and structured JSON output.
+33. Imported familiar fields feeding P2 and Leveler calibration.
+34. Imported known concepts lowering obvious source priority.
+35. Imported personal episodes eligible for P1 only when permitted.
+36. Prior structured Eureka cases outranking broad imported history when both match.
+37. Independent Person Context erasure.
 
 ## Runtime modes
 

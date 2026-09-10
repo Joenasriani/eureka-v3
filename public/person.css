@@ -1,0 +1,24 @@
+.personGrid{display:grid;grid-template-columns:minmax(330px,.72fr) minmax(560px,1.28fr);min-height:calc(100vh - 64px)}
+.personLead{padding:70px 44px 46px;border-right:2px solid var(--ink);background:var(--paper-deep)}
+.personLead h1{font-size:clamp(48px,5.5vw,82px)}
+.personRule{margin-top:48px;display:grid;grid-template-columns:110px 1fr;border-top:1px solid var(--ink);padding-top:12px}
+.personRule span,.personSectionHead span,.personReadout>span,.historySourceNote>span{font-family:var(--mono);font-size:8px;letter-spacing:.07em}
+.personRule p,.personSectionHead p,.historySourceNote p{font-family:var(--serif);font-size:14px;line-height:1.42;margin:0}
+.personReadout{margin-top:36px;border-top:2px solid var(--ink);padding-top:12px}
+.personReadout>strong{display:block;font-family:var(--serif);font-size:28px;font-weight:400;margin:9px 0 14px}
+.personReadout>p{font-family:var(--serif);font-size:14px;line-height:1.4}
+.personFacts{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink);border-left:1px solid var(--ink)}
+.personFacts div{padding:9px;border-right:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.personFacts i{display:block;font-family:var(--mono);font-size:7px;font-style:normal;color:var(--muted);margin-bottom:5px}.personFacts b{font-family:var(--serif);font-size:18px;font-weight:400}
+.personBody{min-width:0}.personSection{border-bottom:2px solid var(--ink)}
+.personSectionHead{display:grid;grid-template-columns:180px 1fr;gap:16px;padding:14px 18px;border-bottom:1px solid var(--ink);background:#fff8dc}
+.personText,.personImport{display:block;width:100%;min-height:190px;border:0;background:transparent;padding:20px 18px;font-family:var(--serif);font-size:20px;line-height:1.45;resize:vertical;outline:0}
+.personText:focus,.personImport:focus{background:#fff7d9}.personImport{min-height:260px;font-family:var(--mono);font-size:11px;line-height:1.55}
+.promptBand,.personWriteBand{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--ink)}
+.promptBand button,.personWriteBand button{border:0;border-right:1px solid var(--ink);background:transparent;min-height:52px;padding:0 16px;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.05em}.promptBand button:hover,.personWriteBand button:hover{background:var(--ink);color:var(--paper)}
+.promptBand span{display:flex;align-items:center;padding:0 14px;font-family:var(--mono);font-size:8px;color:var(--verify)}
+.historySourceNote{display:grid;grid-template-columns:150px 1fr 170px;gap:14px;padding:14px 18px;border-bottom:1px solid var(--ink);align-items:start}
+.historySourceNote a{font-family:var(--mono);font-size:8px;color:var(--ink);text-decoration:underline}.promptText{max-height:420px;overflow:auto;margin:0;padding:18px;background:#201f1a;color:var(--paper);font-family:var(--mono);font-size:10px;line-height:1.55;white-space:pre-wrap;border-bottom:1px solid var(--ink)}
+.personPermissions label{display:grid;grid-template-columns:42px 1fr;border-bottom:1px solid var(--ink);min-height:55px;align-items:center}.personPermissions label:last-child{border-bottom:0}.personPermissions input{justify-self:center}.personPermissions label span{font-family:var(--serif);font-size:15px;padding:10px 14px;border-left:1px solid var(--ink)}
+.personWriteBand{grid-template-columns:1fr 1fr}.personWriteBand button{min-height:70px}.personWriteBand button:first-child{background:var(--signal);color:white}.personLinked{display:block;margin-top:5px;font-family:var(--mono);font-size:7px;color:var(--verify)}
+@media(max-width:920px){.personGrid{grid-template-columns:1fr}.personLead{border-right:0;border-bottom:2px solid var(--ink)}.historySourceNote{grid-template-columns:1fr}.personSectionHead{grid-template-columns:1fr}.personFacts{grid-template-columns:1fr 1fr}}

@@ -22,6 +22,8 @@ Preserve exact user supplied anchors. Do not invent history, traits, motives, di
 
 Stored cases may enter P1 retrieval only under explicit permission.
 
+Imported Person Context is personalization material, not external evidence. Preserve item provenance when present. Candidate inferences remain separate and stay disabled for retrieval unless the user explicitly permits them. Direct biography notes do not automatically become P1 episodes. Prior structured Eureka cases outrank broad imported history when both contain comparable personal source material.
+
 ## Retrieval
 
 Structure comes before source selection. Familiarity affects bridge cost, not structural truth. Semantic similarity may propose a source but cannot verify the mapping.
