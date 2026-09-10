@@ -1,0 +1,49 @@
+PASS  productivity: anchors preserved
+PASS  productivity: P1 source appears when success episode exists
+PASS  productivity: at least three source candidates
+PASS  productivity: candidates replay admitted anchors
+PASS  productivity: five axes remain separate
+PASS  productivity: recognition begins unknown
+PASS  productivity: transfer begins not tested
+PASS  productivity: candidates have boundaries and competing frames
+PASS  productivity: local verifier returns survivors
+PASS  influence: anchors preserved
+PASS  influence: P1 source appears when success episode exists
+PASS  influence: at least three source candidates
+PASS  influence: candidates replay admitted anchors
+PASS  influence: five axes remain separate
+PASS  influence: recognition begins unknown
+PASS  influence: transfer begins not tested
+PASS  influence: candidates have boundaries and competing frames
+PASS  influence: local verifier returns survivors
+PASS  transfer: anchors preserved
+PASS  transfer: P1 source appears when success episode exists
+PASS  transfer: at least three source candidates
+PASS  transfer: candidates replay admitted anchors
+PASS  transfer: five axes remain separate
+PASS  transfer: recognition begins unknown
+PASS  transfer: transfer begins not tested
+PASS  transfer: candidates have boundaries and competing frames
+PASS  transfer: local verifier returns survivors
+PASS  productivity: queueing or feedback is retrieved
+PASS  influence: trailer or compression is retrieved
+PASS  influence: autonomy or consent boundary present
+PASS  transfer: activation or composition is retrieved
+PASS  thin case: app should be able to fail closed upstream
+PASS  high stakes: adjudication does not return personal guidance
+PASS  known already increases distance and novelty floor without truth status
+PASS  too remote pulls distance nearer
+PASS  too abstract changes abstraction preference
+PASS  strong AHA adjusts retrieval prior only
+PASS  reroute exclusion can remove a rejected source
+PASS  parser: explanation does not trigger planning relations
+PASS  P2: incidental story vocabulary does not create familiarity
+PASS  influence: unrelated queueing source is not selected
+PASS  single vague relation cannot bypass intent and keyword route
+PASS  P1 reframe changes condition instead of trait label
+PASS  public copy contains no en dash or em dash characters
+PASS  public copy avoids the project banned stock wording
+PASS  public styling rejects generic AI and SaaS surface patterns
+PASS  public markup rejects common chat and card naming
+
+47/47 passed

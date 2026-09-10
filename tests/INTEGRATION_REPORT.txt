@@ -1,0 +1,14 @@
+PASS  status endpoint reports deterministic mode
+PASS  analyze endpoint returns surviving candidates
+PASS  recognition changes recognition axis and retrieval profile only
+PASS  reroute excludes the rejected source and preserves feedback history
+PASS  transfer outcome remains its own status axis
+PASS  self transfer is stored as user material without truth promotion
+PASS  manual Leveler adjustment affects routing only
+PASS  P1 evidence inspection remains user material and does not touch structure
+PASS  history endpoint returns the case
+PASS  opt in history can become P1 when the current case has no contrast episode
+PASS  thin story returns a null result instead of manufactured candidate
+PASS  case deletion removes autobiographical record
+
+12/12 passed
