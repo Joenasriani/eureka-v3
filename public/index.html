@@ -3,8 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Eureka compares lived episodes with structurally related source fields, then tests what survives.">
-  <title>Eureka / Case Instrument</title>
+  <title>Eureka | Structural Case Reasoning Instrument</title>
+  <meta name="description" content="Eureka is a case reasoning instrument that preserves reported episodes as traceable anchors, maps structural relationships across source fields, tests candidate transfers and keeps evidence, structure, recognition and outcome status separate.">
+  <meta name="author" content="Joe Nasr">
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+  <link rel="canonical" href="https://eureka-v3.vercel.app/">
+  <link rel="author" href="https://joe-nasr-signals.vercel.app/v2/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Eureka | Structural Case Reasoning Instrument">
+  <meta property="og:description" content="Trace episodes, extract relational structure, compare source fields, test mappings and keep evidence, recognition and transfer outcomes separate.">
+  <meta property="og:url" content="https://eureka-v3.vercel.app/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Eureka | Structural Case Reasoning Instrument">
+  <meta name="twitter:description" content="A case reasoning instrument for traceable anchors, structural mappings, adversarial transfer checks and separate status axes.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "@id": "https://eureka-v3.vercel.app/#application",
+    "name": "Eureka",
+    "alternateName": "Eureka Case Instrument",
+    "url": "https://eureka-v3.vercel.app/",
+    "description": "Case reasoning instrument that preserves reported episodes as traceable anchors, extracts relational structure, searches contrasting source fields, constructs explicit mappings, tests transfer and keeps evidence, structural, recognition and outcome status separate.",
+    "applicationCategory": "ProductivityApplication",
+    "operatingSystem": "Web browser",
+    "creator": {
+      "@type": "Person",
+      "@id": "https://joe-nasr-signals.vercel.app/v2/#joe-nasr",
+      "name": "Joe Nasr",
+      "url": "https://joe-nasr-signals.vercel.app/v2/"
+    },
+    "sameAs": "https://github.com/Joenasriani/eureka-v3"
+  }
+  </script>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -78,253 +109,42 @@
                 <option value="prioritize">Choose what matters</option>
                 <option value="influence">Influence without coercion</option>
                 <option value="sell">Create relevance</option>
-                <option value="negotiate">Negotiate</option>
-                <option value="teach">Teach or explain</option>
-                <option value="lead">Coordinate people</option>
-                <option value="learn">Learn or remember</option>
-                <option value="create">Create or differentiate</option>
-                <option value="decide">Decide</option>
               </select>
             </label>
 
             <label class="field">
-              <span>07 / FAMILIAR FIELDS</span>
-              <input id="familiarDomains" name="familiarDomains" placeholder="Music, film, coding, football, cooking">
+              <span>07 / CONSEQUENTIAL</span>
+              <select id="consequential" name="consequential">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
             </label>
 
-            <label class="historyGate full">
-              <input id="reuseHistory" name="reuseHistory" type="checkbox">
-              <span><b>08 / PRIOR CASE ACCESS</b>Let this case search episodes I previously kept. Stored cases stay out unless I allow them here.</span>
+            <label class="field full">
+              <span>08 / FAMILIAR SOURCE FIELDS</span>
+              <input id="familiarFields" name="familiarFields" placeholder="Optional: music, editing, games, physics, teaching...">
             </label>
 
-            <div class="examples full" aria-label="Sample cases">
-              <span>LOAD A TEST CASE</span>
-              <button type="button" data-example="productivity">SCHEDULE COLLAPSE</button>
-              <button type="button" data-example="influence">OVER EXPLANATION</button>
-              <button type="button" data-example="transfer">STARTING FRICTION</button>
-            </div>
+            <label class="field full consentField">
+              <input id="allowHistory" name="allowHistory" type="checkbox">
+              <span>Allow prior saved cases to be searched for a contrasting episode.</span>
+            </label>
 
-            <div class="submitBand full">
-              <div class="submitPremise">
-                <span>STOP CONDITION</span>
-                <strong>If no representation earns transfer, return no candidate.</strong>
-              </div>
-              <button class="submit" type="submit"><span>SEARCH THE CASE</span><b aria-hidden="true">↗</b></button>
+            <div class="formActions full">
+              <button type="submit" class="primary">RUN CASE</button>
+              <button type="button" class="secondary" id="resetForm">CLEAR</button>
             </div>
           </form>
         </div>
 
-        <div class="run hidden" id="run">
-          <aside class="runRail">
-            <div class="railHead">
-              <button class="back" id="newCase">NEW CASE</button>
-              <span id="caseIdLabel"></span>
-            </div>
-            <div class="railTitle">TRACE</div>
-            <div class="trace" id="trace"></div>
-            <div class="railRule">
-              <span>SEPARATION RULE</span>
-              <p>Your recognition can change future search. It cannot change evidence.</p>
-            </div>
-          </aside>
-
-          <div class="runMain">
-            <header class="caseHead">
-              <p class="locator" id="outcomeLocator">CASE / RESULT</p>
-              <h2 id="caseHeadline">Representations that survived</h2>
-              <p id="caseSubhead"></p>
-            </header>
-
-            <section class="frameStrip" id="frameStrip"></section>
-            <section class="nullResult hidden" id="nullResult"></section>
-            <section class="candidateList" id="candidateList"></section>
-          </div>
-        </div>
+        <div id="caseOutput" class="caseOutput hidden"></div>
       </section>
 
-      <section class="view" id="view-cases">
-        <div class="pageTop ledgerTop">
-          <p class="locator">LEDGER / CASES</p>
-          <h1>Keep episodes. Do not turn them into a personality.</h1>
-          <p class="lead">Each row preserves what was reported, what representation was proposed, how you recognized it, and what happened after a test.</p>
-        </div>
-        <div class="ledgerTools"><button id="clearLedger">ERASE ALL CASES</button></div>
-        <div id="caseHistory" class="history"></div>
-      </section>
-
-      <section class="view" id="view-calibration">
-        <div class="pageTop compact levelTop">
-          <p class="locator">LEVELER / SEARCH DISTANCE</p>
-          <h1>Place the source just beyond what is already yours.</h1>
-          <p class="lead">This is not an intelligence score. It controls source distance, abstraction, and the amount of new machinery needed before a relation becomes usable.</p>
-        </div>
-        <div class="frontierBoard">
-          <div class="frontierAxisLabel"><span>NEAR</span><span>SOURCE DISTANCE</span><span>REMOTE</span></div>
-          <div class="frontierScale" id="frontierScale">
-            <div class="frontierBand b1"><span>ALREADY MINE</span></div>
-            <div class="frontierBand b2"><span>WITHIN REACH</span></div>
-            <div class="frontierBand b3"><span>EDGE</span></div>
-            <div class="frontierBand b4"><span>STRAIN</span></div>
-            <div class="frontierBand b5"><span>LOST</span></div>
-            <div class="frontierNeedle" id="frontierNeedle"><span>SEARCH</span></div>
-          </div>
-          <div class="calibrationFacts" id="calibrationFacts"></div>
-          <div class="levelControls">
-            <button data-calibrate="NEARER">PULL SOURCE CLOSER</button>
-            <button data-calibrate="FARTHER">PUSH SOURCE FARTHER</button>
-            <button data-calibrate="MORE_CONCRETE">LOWER ABSTRACTION</button>
-            <button data-calibrate="MORE_ABSTRACT">RAISE ABSTRACTION</button>
-            <button data-calibrate="RESET">ZERO THE LEVELER</button>
-          </div>
-          <div class="calibrationNote">
-            <strong>ROUTING EFFECT</strong>
-            <p>Already known moves the next search outward. Too remote moves it inward. Too abstract changes the bridge before replacing the source. Does not fit sends the mapping back for attack.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="view" id="view-method">
-        <div class="pageTop compact methodTop">
-          <p class="locator">SCHEMA / V5.5 ROUTE</p>
-          <h1>Generation proposes. Separate gates decide what may reach you.</h1>
-          <p class="lead">The visible output is compiled from admitted objects. Structure, evidence, personal fit, recognition, and transfer remain separate throughout the case.</p>
-        </div>
-        <div class="methodTable" id="methodTable"></div>
-      </section>
+      <section class="view" id="view-cases"></section>
+      <section class="view" id="view-calibration"></section>
+      <section class="view" id="view-method"></section>
     </main>
   </div>
-
-  <template id="candidateTemplate">
-    <article class="candidate">
-      <header class="candidateTop">
-        <div class="candidateIdentity">
-          <span class="candidateIndex"></span>
-          <span class="sourcePool"></span>
-        </div>
-        <div class="frontierTag"></div>
-      </header>
-
-      <div class="crossing">
-        <section class="crossA">
-          <span class="sectionCode">A / REPORTED EPISODE</span>
-          <blockquote class="yourMoment"></blockquote>
-          <div class="gapPocket">
-            <span class="sectionCode">UNEXPLAINED RESIDUE</span>
-            <p class="gap"></p>
-          </div>
-        </section>
-
-        <div class="crossMark" aria-hidden="true"><span>A</span><b>×</b><span>B</span></div>
-
-        <section class="crossB">
-          <span class="sectionCode">B / SOURCE FIELD</span>
-          <h3 class="sourceName"></h3>
-          <p class="secondMatrix"></p>
-          <div class="collisionRows"></div>
-        </section>
-      </div>
-
-      <section class="aha">
-        <span class="sectionCode">C / RESULTING REPRESENTATION</span>
-        <p class="eureka"></p>
-      </section>
-
-      <section class="replay ruled">
-        <span class="sectionCode">REPLAY / SAME EVENTS, NEW ACCOUNT</span>
-        <div class="replayRows"></div>
-      </section>
-
-      <section class="visible ruled">
-        <span class="sectionCode">MOVE DELTA</span>
-        <div>
-          <p class="whatVisible"></p>
-          <div class="transferBox"><span>SMALLEST TEST</span><p class="microTransfer"></p></div>
-        </div>
-      </section>
-
-      <section class="attack ruled">
-        <div><span class="sectionCode">COUNTER ANCHOR</span><p class="counterAnchor"></p></div>
-        <div><span class="sectionCode">BOUNDARY</span><p class="boundary"></p></div>
-        <div><span class="sectionCode">RIVAL ACCOUNT</span><p class="competingFrame"></p></div>
-      </section>
-
-      <section class="sourceCheck ruled">
-        <span class="sectionCode">SOURCE CLAIM CHECK</span>
-        <div>
-          <p class="evidenceSummary">The source field has not been inspected against external material in this case.</p>
-          <button class="researchEvidence">INSPECT SOURCE CLAIM</button>
-          <div class="evidenceResult hidden">
-            <p class="evidenceScope"></p>
-            <p class="evidenceText"></p>
-            <div class="evidenceSources"></div>
-          </div>
-        </div>
-      </section>
-
-      <details class="statusDetails">
-        <summary>OPEN THE FIVE AXES</summary>
-        <div class="statusAxes"></div>
-      </details>
-
-      <section class="recognition">
-        <div class="recognitionQuestion">
-          <span class="sectionCode">USER REPORT ONLY</span>
-          <h4>Did this alter how those events fit together for you?</h4>
-        </div>
-        <div class="recognitionButtons">
-          <button data-recognition="CLICKS">IT CLICKS</button>
-          <button data-recognition="STRONG_AHA">STRONG AHA</button>
-          <button data-recognition="INTERESTING">WORTH KEEPING</button>
-          <button data-recognition="KNOWN_ALREADY">ALREADY KNOWN</button>
-          <button data-recognition="DOES_NOT_FIT">DOES NOT FIT</button>
-        </div>
-        <div class="reasonPanel hidden">
-          <span class="sectionCode">DIAGNOSE THE MISS</span>
-          <div class="reasonButtons">
-            <button data-reason="TOO_OBVIOUS">TOO OBVIOUS</button>
-            <button data-reason="KNOWN_CONCEPT">KNOWN CONCEPT</button>
-            <button data-reason="TOO_REMOTE">TOO REMOTE</button>
-            <button data-reason="TOO_ABSTRACT">TOO ABSTRACT</button>
-            <button data-reason="TOO_COMPLEX">TOO COMPLEX</button>
-            <button data-reason="TOO_SIMPLE">TOO SIMPLE</button>
-            <button data-reason="FORCED_CONNECTION">FORCED CONNECTION</button>
-            <button data-reason="USEFUL_NOT_SURPRISING">USEFUL, NOT NEW</button>
-            <button data-reason="CHANGED_MY_VIEW">CHANGED THE ACCOUNT</button>
-          </div>
-          <textarea class="reflection" placeholder="Optional: name the part that changed or failed."></textarea>
-          <button class="recordRecognition">COMMIT REPORT</button>
-        </div>
-      </section>
-
-      <section class="afterRecognition hidden">
-        <button class="reroute">REJECT THIS SOURCE AND SEARCH AGAIN</button>
-        <button class="openSelfTransfer">FIND THE RELATION IN ANOTHER EPISODE</button>
-        <button class="openTransfer">LOG A REAL WORLD TEST</button>
-      </section>
-
-      <section class="selfTransferPanel hidden">
-        <span class="sectionCode">SELF TRANSFER / USER WORDING</span>
-        <p>State the relation without copying Eureka. Then name another episode where you think the same relation may appear.</p>
-        <textarea class="selfRestatement" placeholder="The relation in my own words..."></textarea>
-        <textarea class="anotherEpisode" placeholder="Another episode where I suspect it appears..."></textarea>
-        <button class="recordSelfTransfer">COMMIT SELF TRANSFER</button>
-      </section>
-
-      <section class="transferPanel hidden">
-        <span class="sectionCode">TRANSFER / OBSERVED CONTEXT ONLY</span>
-        <p>Record what happened in this case. One useful result does not certify the whole representation.</p>
-        <div class="transferButtons">
-          <button data-transfer="TRANSFER_HELPED">HELPED HERE</button>
-          <button data-transfer="TRANSFER_NO_CLEAR_EFFECT">NO CLEAR EFFECT</button>
-          <button data-transfer="TRANSFER_FAILED">FAILED HERE</button>
-          <button data-transfer="OUTCOME_UNINTERPRETABLE">CANNOT TELL</button>
-        </div>
-        <textarea class="transferNote" placeholder="What happened after the test?"></textarea>
-        <button class="recordTransfer">COMMIT OUTCOME</button>
-      </section>
-    </article>
-  </template>
-
   <script type="module" src="/app.js"></script>
 </body>
 </html>
