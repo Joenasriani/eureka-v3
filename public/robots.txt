@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://eureka-v3.vercel.app/sitemap.xml
