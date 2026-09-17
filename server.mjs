@@ -8,8 +8,11 @@ import { parsePersonImport } from './server/person.mjs';
 import { aiAvailable } from './server/ai.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+await loadEnvFile(path.join(__dirname,'.env'));
+
 const PUBLIC = path.join(__dirname,'public');
 const PORT = Number(process.env.PORT || 8787);
+const HOST = process.env.EUREKA_HOST || '127.0.0.1';
 
 const server = http.createServer(async (req,res) => {
   try {
@@ -47,23 +50,47 @@ const server = http.createServer(async (req,res) => {
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Eureka running at http://localhost:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Eureka running at http://${HOST}:${PORT}`);
   console.log(`AI assisted discovery: ${aiAvailable() ? 'enabled' : 'disabled'}`);
 });
 
+async function loadEnvFile(file) {
+  try {
+    const text = await fs.readFile(file,'utf8');
+    for (const rawLine of text.split(/\r?\n/)) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith('#')) continue;
+      const match = line.match(/^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+      if (!match) continue;
+      const [,key,rawValue] = match;
+      if (process.env[key] !== undefined) continue;
+      let value = rawValue.trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) value = value.slice(1,-1);
+      process.env[key] = value;
+    }
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+}
+
 async function body(req) {
   const chunks=[];
-  for await (const chunk of req) chunks.push(chunk);
+  let size=0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > 1_000_000) throw new Error('BODY_TOO_LARGE');
+    chunks.push(chunk);
+  }
   const text = Buffer.concat(chunks).toString('utf8');
-  if (text.length > 1_000_000) throw new Error('BODY_TOO_LARGE');
   return text ? JSON.parse(text) : {};
 }
 
 async function serveStatic(pathname,res) {
   const rel = pathname === '/' ? 'index.html' : decodeURIComponent(pathname.slice(1));
-  const target = path.normalize(path.join(PUBLIC,rel));
-  if (!target.startsWith(PUBLIC)) return json(res,403,{error:'FORBIDDEN'});
+  const target = path.resolve(PUBLIC,rel);
+  const outside = path.relative(PUBLIC,target);
+  if (outside === '..' || outside.startsWith(`..${path.sep}`) || path.isAbsolute(outside)) return json(res,403,{error:'FORBIDDEN'});
   try {
     let data = await fs.readFile(target);
     if (rel === 'index.html') {

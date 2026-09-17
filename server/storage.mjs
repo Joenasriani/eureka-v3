@@ -5,10 +5,34 @@ import { emptyPersonContext } from './person.mjs';
 const STATE_FILE = path.resolve(process.env.EUREKA_STATE_FILE || 'data/state.json');
 let writeChain = Promise.resolve();
 
+function defaultProfile() {
+  return {
+    targetDistance:.55,
+    abstractionPreference:.5,
+    bridgeTolerance:.55,
+    noveltyFloor:.45,
+    sourceStats:{},
+    knownConcepts:[],
+    rejectedConcepts:[]
+  };
+}
+
+function defaultState() {
+  return {profile:defaultProfile(), cases:[], personContext:emptyPersonContext()};
+}
+
 export async function readState() {
-  const raw = await fs.readFile(STATE_FILE, 'utf8');
-  const state = JSON.parse(raw);
-  if (!state.profile) state.profile = {targetDistance:.55,abstractionPreference:.5,bridgeTolerance:.55,noveltyFloor:.45,sourceStats:{},knownConcepts:[],rejectedConcepts:[]};
+  let state;
+  try {
+    const raw = await fs.readFile(STATE_FILE, 'utf8');
+    state = JSON.parse(raw);
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    state = defaultState();
+    await writeState(state);
+    return state;
+  }
+  if (!state.profile) state.profile = defaultProfile();
   if (!Array.isArray(state.cases)) state.cases = [];
   if (!state.personContext) state.personContext = emptyPersonContext();
   return state;
@@ -16,8 +40,9 @@ export async function readState() {
 
 export async function writeState(next) {
   writeChain = writeChain.then(async () => {
+    await fs.mkdir(path.dirname(STATE_FILE), {recursive:true});
     const tmp = `${STATE_FILE}.tmp`;
-    await fs.writeFile(tmp, JSON.stringify(next, null, 2));
+    await fs.writeFile(tmp, JSON.stringify(next, null, 2), {mode:0o600});
     await fs.rename(tmp, STATE_FILE);
   });
   return writeChain;

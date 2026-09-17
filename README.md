@@ -11,7 +11,6 @@ The user alone records whether a candidate clicked. That report can change later
 The current build also supports:
 
 0. A separate Person Context record with direct notes, ChatGPT JSON import, provenance, permissions, known concepts, familiar fields, prior stories, and independent erasure. Person Context can alter retrieval and Leveler calibration but cannot promote evidence or structural status.
-
 1. Same case P1 retrieval from a contrasting successful episode.
 2. Prior case P1 retrieval when the user explicitly permits stored case access.
 3. P2 familiar field retrieval only from explicitly supplied familiarity.
@@ -40,17 +39,22 @@ From this folder:
 
 Open:
 
-`http://localhost:8787`
+`http://127.0.0.1:8787`
+
+The server binds to localhost by default because case and Person Context endpoints are intentionally unauthenticated for local single-user evaluation. Do not expose this server to a LAN or public network without adding an authentication and authorization layer. `EUREKA_HOST` can override the bind address when an appropriately protected environment requires it.
 
 No third party packages are required for the local structural route.
 
 ## Model route
 
-Create a local `.env` or set environment variables in the shell before starting:
+Create a local `.env` file or set environment variables in the shell before starting. The server loads `.env` from the repository root when present, while already-set shell variables take precedence.
 
-`OPENAI_API_KEY`
+Example:
 
-`OPENAI_MODEL`
+```text
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-5.6-terra
+```
 
 The default model ID in the server is `gpt-5.6-terra`.
 
@@ -76,6 +80,8 @@ Read:
 
 `docs/PRODUCT_LANGUAGE_RULES.md`
 
-## Storage
+## Storage and privacy
 
-This package stores state in `data/state.json`. It is intended for local development and evaluation. It is not a substitute for authenticated encrypted hosted storage.
+Runtime state is stored locally in `data/state.json`. That file can contain cases and Person Context data, is ignored by Git, and is created automatically when absent. `data/state.example.json` is the non-personal repository template.
+
+State files are written with owner-only file permissions where the host filesystem supports them. This remains local development/evaluation storage, not authenticated encrypted hosted storage.
