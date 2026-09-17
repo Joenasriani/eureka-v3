@@ -1,0 +1,8 @@
+# Local runtime state can contain autobiographical or Person Context data.
+data/state.json
+data/*.tmp
+
+# Local credentials
+.env
+.env.*
+!.env.example
